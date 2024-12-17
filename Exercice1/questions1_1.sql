@@ -14,6 +14,6 @@
 --4. Pour chacune des requêtes précédentes :
 -- • Obtenez le plan d’exécution retourné par le SGBD
 -- • Interprétez et expliquez à chaque fois le plan d’exécution proposé par le
--- système (types d’accès aux tables/index, types de jointure, coˆut du plan) (la
+-- système (types d’accès aux tables/index, types de jointure, coût du plan) (la
 -- réponse doit être brève et concise)
 -- • Dessinez ce plan sous forme arborescente en utilisant la syntaxe vue en cours

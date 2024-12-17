@@ -4,7 +4,7 @@
 -- select ...
 -- from ...
 -- etc ...
--- La commande EXP LAIN a pour effet de vous afficher le plan d’exécution choisi par l’optimiseur
+-- La commande EXPLAIN a pour effet de vous afficher le plan d’exécution choisi par l’optimiseur
 -- de requêtes. L’option “analyse” entre parenthèses va entrainer l’exécution effective de la requête,
 -- ce qui permet de comparer le coût du plan avec le temps réel, ainsi que le nombre réel de tuples
 -- générés à chaque étape. Enfin, “buffers” permet d’afficher le nombre de blocs lus, soit dans la
@@ -17,6 +17,8 @@
 -- ,→ Le nombre de blocs lus
 -- ,→ L’accès utilisés vers les tables
 -- ,→ Les algorithmes utilisés
+
+
 -- 1. (REQ1) Listez toutes les informations sur les produits
 
 

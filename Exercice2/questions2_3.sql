@@ -3,7 +3,7 @@ SELECT
     indexname,
     indexdef 
 FROM pg_indexes 
-WHERE schemaname = ' optimisation ' 
+WHERE schemaname = 'optimisation' 
 ORDER BY tablename,
     indexname;
 
@@ -13,18 +13,18 @@ ORDER BY tablename,
 -- votre base seront différentes. C’est à vous de choisir ces valeurs de telle sorte à ce que les
 -- requêtes qui suivent vous donnent des résultats.
 -- • Requête-1:
--- Select *
--- from optimisation . commandes
--- where numC ='109000 ' -- valeur à modifier selon votre base
--- and datecom ='2020 -03 -31 '; -- valeur à modifier selon votre base
+Select *
+from optimisation . commandes
+where numC ='109000 ' -- valeur à modifier selon votre base
+and datecom ='2020 -03 -31 '; -- valeur à modifier selon votre base
 -- • Requête-2:
--- Select *
--- from optimisation . commandes
--- where datecom ='2020 -03 -31 ';
+Select *
+from optimisation . commandes
+where datecom ='2020 -03 -31 ';
 -- • Requête-3:
--- Select *
--- from optimisation . commandes
--- where numC ='109000 ';
+Select *
+from optimisation . commandes
+where numC ='109000 ';
 
 -- Pour chacune des trois requêtes
 -- (a) Donnez le plan d’exécution PEP retourné par PostgreSQL

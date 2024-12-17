@@ -98,3 +98,7 @@ and optimisation.produits.nump = optimisation.concerne.nump
 -- "QUERY PLAN":"                                ->  Seq Scan on clients  (cost=0.00..23.00 rows=500 width=12)"
 -- "QUERY PLAN":"                    ->  Hash  (cost=23.00..23.00 rows=500 width=12)"
 -- "QUERY PLAN":"                          ->  Seq Scan on produits  (cost=0.00..23.00 rows=500 width=12)"
+
+-- On remarque que les coûts les plus importants sont le HashAggregate et le Merge Join, ainsi que la Nested Loop.
+-- Ce qui peut paraître étonnant est que la requête HashAggregate ne manipule que 83754 rows, mais est plus longue que
+-- le Merge JOIN qui en manipule 100 fois plus.

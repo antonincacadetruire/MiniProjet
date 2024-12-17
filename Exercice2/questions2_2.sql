@@ -21,27 +21,40 @@
 
 -- 1. (REQ1) Listez toutes les informations sur les produits
 
+SELECT *
+FROM optimisation.produits;
 
 -- 2. (REQ2) Listez le numéro et le nom de tous les produits
-
+SELECT NumP,NomP
+FROM optimisation.produits;
 
 -- 3. (REQ3) Idem, en ajoutant la clause ”distinct”
-
+SELECT distinct NumP,NomP
+FROM optimisation.produits;
 
 -- 4. (REQ4) Même question en ordonnant le résultat selon le nom des produits
+SELECT distinct NumP,NomP
+FROM optimisation.produits
+ORDER BY NomP asc;
 
-
--- 5. (REQ5) Listez les produits dont le nom est ’nomp 327’
-
+-- 5. (REQ5) Listez les produits dont le nom est ’nomp_327’
+SELECT *
+FROM optimisation.produits
+where NomP='nomp_327'
 
 -- 6. (REQ6) Donnez le nombre de commandes par client (numc, nombre)
-
+SELECT distinct cl.NumC,COUNT(*) as nombre
+FROM optimisation.clients as cl,optimisation.commandes as co
+WHERE cl.NumC = co.NumC
+GROUP BY cl.NumC;
 
 -- 7. (REQ7) Donnez les infos sur chaque commande, sous la forme (’nom du client’, ’date de la
 -- commande’). Quelle est la méthode de jointure utilisée ? Pourquoi les relations sont elles
 -- considérées dans cet ordre dans le plan d’exécution ? Pourquoi la table commande n’est pas
 -- utilisée en fait ? Vous pouvez écrire différentes variations syntaxiques de la jointure pour
 -- observer ce qui se passe
+
+
 -- On souhaite mantenant afficher les produits commandés par les clients. Soit la requête (REQ8)
 -- suivante:
 -- -- - - - - - - - REQ8 - - - - - - - - - - - - - - - - -

@@ -30,16 +30,16 @@ where numC =10;
 -- (a) Donnez le plan d’exécution PEP retourné par PostgreSQL
 
 -- • Requête-1:
-"QUERY PLAN":"Index Scan using commandes_pkey on commandes  (cost=0.28..8.30 rows=1 width=105)"
-"QUERY PLAN":"  Index Cond: ((datecom = '2020-09-17'::date) AND (numc = 10))"
+-- "QUERY PLAN":"Index Scan using commandes_pkey on commandes  (cost=0.28..8.30 rows=1 width=105)"
+-- "QUERY PLAN":"  Index Cond: ((datecom = '2020-09-17'::date) AND (numc = 10))"
 
 -- • Requête-2:
-"QUERY PLAN":"Index Scan using commandes_pkey on commandes  (cost=0.28..8.29 rows=1 width=105)"
-"QUERY PLAN":"  Index Cond: (datecom = '2020-09-17'::date)"
+-- "QUERY PLAN":"Index Scan using commandes_pkey on commandes  (cost=0.28..8.29 rows=1 width=105)"
+-- "QUERY PLAN":"  Index Cond: (datecom = '2020-09-17'::date)"
 
 -- • Requête-3:
-"QUERY PLAN":"Seq Scan on commandes  (cost=0.00..59.95 rows=3 width=105)"
-"QUERY PLAN":"  Filter: (numc = 10)"
+-- "QUERY PLAN":"Seq Scan on commandes  (cost=0.00..59.95 rows=3 width=105)"
+-- "QUERY PLAN":"  Filter: (numc = 10)"
 
 ------------------------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ where numC =10;
 -- de commande ?
 -- Il faut créer un deuxième index sur numéro de client
 
-à faire
+-- à faire
 
 ------------------------------------------------------------------------------------
 
@@ -76,22 +76,22 @@ join optimisation.concerne co using ( nump )
 join optimisation.clients c using ( numc )
 where nomc ='nomc_1287';
 -- (a) Donnez le plan d’exécution PEP retourné par PostgreSQL
-"QUERY PLAN":"Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
-"QUERY PLAN":"  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
-"QUERY PLAN":"        Hash Cond: (co.numc = c.numc)"
-"QUERY PLAN":"        ->  Seq Scan on concerne co  (cost=0.00..92.23 rows=5923 width=8)"
-"QUERY PLAN":"        ->  Hash  (cost=24.25..24.25 rows=1 width=4)"
-"QUERY PLAN":"              ->  Seq Scan on clients c  (cost=0.00..24.25 rows=1 width=4)"
-"QUERY PLAN":"                    Filter: ((nomc)::text = 'nomc_1287'::text)"
-"QUERY PLAN":"  ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)"
-"QUERY PLAN":"        Index Cond: (nump = co.nump)"
+-- "QUERY PLAN":"Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
+-- "QUERY PLAN":"  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
+-- "QUERY PLAN":"        Hash Cond: (co.numc = c.numc)"
+-- "QUERY PLAN":"        ->  Seq Scan on concerne co  (cost=0.00..92.23 rows=5923 width=8)"
+-- "QUERY PLAN":"        ->  Hash  (cost=24.25..24.25 rows=1 width=4)"
+-- "QUERY PLAN":"              ->  Seq Scan on clients c  (cost=0.00..24.25 rows=1 width=4)"
+-- "QUERY PLAN":"                    Filter: ((nomc)::text = 'nomc_1287'::text)"
+-- "QUERY PLAN":"  ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)"
+-- "QUERY PLAN":"        Index Cond: (nump = co.nump)"
 
 ------------------------------------------------------------------------------------
 
 -- (b) Dessinez ce plan sous forme arborescente en utilisant la syntaxe vue en cours, et en
 -- annotant avec les algorithmes et méthodes d’accès aux tables
 
-à faire
+-- à faire
 
 ------------------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ where nomc ='nomc_1287';
 -- create index ... ;
 -- create index ... ;
 
-à faire
+-- à faire
 
 ------------------------------------------------------------------------------------
 
@@ -111,7 +111,7 @@ where nomc ='nomc_1287';
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
 
-à faire
+-- à faire
 
 ------------------------------------------------------------------------------------
 
@@ -138,20 +138,20 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 
 -- 5. Soit la requête suivante, qui est souvent utilisée pour éviter de manquer des recherches pour
 -- un problème de casse.
--- -- Recherche et affichage des clients avec passage en majuscules
-select upper ( NomC ) , adressec
-from clients
-where upper ( NomC )='nomc_1287';
+-- Recherche et affichage des clients avec passage en majuscules
+-- select upper ( NomC ) , adressec
+-- from clients
+-- where upper ( NomC )='nomc_1287';
 -- (a) Donnez le plan d’exécution de cette requête en utilisant cette syntaxe:
 -- Explain analyse
-"QUERY PLAN":"Seq Scan on clients  (cost=0.00..25.50 rows=2 width=129) (actual time=0.551..0.552 rows=0 loops=1)"
-"QUERY PLAN":"  Filter: (upper((nomc)::text) = 'nomc_1287'::text)"
-"QUERY PLAN":"  Rows Removed by Filter: 500"
-"QUERY PLAN":"Planning Time: 1.040 ms"
-"QUERY PLAN":"Execution Time: 0.585 ms"
+-- "QUERY PLAN":"Seq Scan on clients  (cost=0.00..25.50 rows=2 width=129) (actual time=0.551..0.552 rows=0 loops=1)"
+-- "QUERY PLAN":"  Filter: (upper((nomc)::text) = 'nomc_1287'::text)"
+-- "QUERY PLAN":"  Rows Removed by Filter: 500"
+-- "QUERY PLAN":"Planning Time: 1.040 ms"
+-- "QUERY PLAN":"Execution Time: 0.585 ms"
 -- requête à expliciter >
 
-à faire
+-- à faire
 
 ------------------------------------------------------------------------------------
 
@@ -172,17 +172,18 @@ where upper ( NomC )='nomc_1287';
 ------------------------------------------------------------------------------------
 
 -- 6. Soit maintenant la requête suivante
-SELECT COUNT (*)
-FROM commandes
-WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
+-- SELECT COUNT (*)
+-- FROM commandes
+-- WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 -- (a) Donnez le plan d’exécution de cette requête en utilisant la syntaxe:
 -- Explain analyse
-"QUERY PLAN":"Aggregate  (cost=64.97..64.98 rows=1 width=8) (actual time=0.872..0.873 rows=1 loops=1)"
-"QUERY PLAN":"  ->  Seq Scan on commandes  (cost=0.00..64.94 rows=10 width=0) (actual time=0.042..0.854 rows=201 loops=1)"
-"QUERY PLAN":"        Filter: (EXTRACT(year FROM datecom) = '2017'::numeric)"
-"QUERY PLAN":"        Rows Removed by Filter: 1795"
-"QUERY PLAN":"Planning Time: 1.085 ms"
-"QUERY PLAN":"Execution Time: 0.938 ms"
+
+-- "QUERY PLAN":"Aggregate  (cost=64.97..64.98 rows=1 width=8) (actual time=0.872..0.873 rows=1 loops=1)"
+-- "QUERY PLAN":"  ->  Seq Scan on commandes  (cost=0.00..64.94 rows=10 width=0) (actual time=0.042..0.854 rows=201 loops=1)"
+-- "QUERY PLAN":"        Filter: (EXTRACT(year FROM datecom) = '2017'::numeric)"
+-- "QUERY PLAN":"        Rows Removed by Filter: 1795"
+-- "QUERY PLAN":"Planning Time: 1.085 ms"
+-- "QUERY PLAN":"Execution Time: 0.938 ms"
 -- requête à expliciter >
 
 ------------------------------------------------------------------------------------
@@ -190,17 +191,17 @@ WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le en indiquant notamment les chemins d’accès aux tables et les algorithmes
 
-à faire
+-- à faire
 
 ------------------------------------------------------------------------------------
 
 -- (c) La clé primaire est-elle utilisée ? Pourquoi ?
 
-non, à faire
+-- non, car il y a d'abord une extraction  
 
 ------------------------------------------------------------------------------------
 
 -- (d) Plutôt que de créer un nouvel index couteux, proposez une ré-écriture de la requête qui
 -- utilisera l’index existant via la clé primaire.
 
-à faire
+-- à faire

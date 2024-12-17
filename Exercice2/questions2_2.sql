@@ -43,7 +43,7 @@
 -- On souhaite mantenant afficher les produits commandés par les clients. Soit la requête (REQ8)
 -- suivante:
 -- -- - - - - - - - REQ8 - - - - - - - - - - - - - - - - -
--- explain -- Attention , pas de mot clé " analyse " ici car la requ ^e te ne termine pas !
+-- explain -- Attention , pas de mot clé " analyse " ici car la requ ê te ne termine pas !
 -- select distinct nomc , nomp
 -- from optimisation . clients , optimisation . concerne , optimisation . produits , optimisation . commandes ,
 -- optimisation . livraisons

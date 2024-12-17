@@ -3,7 +3,7 @@
 TESTS : https://sqliteonline.com/
 
 # Ex1
-## 1
+## 1.1
 ### q3, 4
 **Le nom et prénom du client numéro 5**
 ```sql
@@ -45,16 +45,23 @@ Execution Time: 3.402 ms
 Accès sequentiel sur client pour construire une table de hashage, accès sequentiel sur occupation et filtrage sur jour, puis jointure avec un hash-join entre la table de hashage et les occupations filtrées.
 ![image](./Exercice1/PELex1.drawio.png)
 
-## 2
+## 1.2
 ### q1
 ```sql
 CREATE UNIQUE INDEX idx_client_cli_id ON client(cli_id);
 CREATE INDEX idx_occupation_cli_id ON occupation(cli_id);
 CREATE INDEX idx_occupation_jour ON occupation(jour);
 ```
+### q2
+
+a) same
+b) un peu dif on a un heap scan bit jspquoi à voir
+c) index scan
+d) hash, hash join et index scan à droite asy jsp pk
 
 
-3.2 Donner l’expression algébrique correspondante (PEL)
+# Ex3
+## 3.2 Donner l’expression algébrique correspondante (PEL)
 $
 \pi_{a.Nom,f.Titre}((\rho_{Artiste\to a}(\sigma_{a.ID-artiste=j.ID-artiste})\rho_{Joue\to j})(\sigma_{j.ID-film=f.ID-film})\rho_{Film\to f})
 $

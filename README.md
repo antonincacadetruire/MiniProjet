@@ -53,6 +53,14 @@ CREATE INDEX idx_occupation_cli_id ON occupation(cli_id);
 CREATE INDEX idx_occupation_jour ON occupation(jour);
 ```
 
+
+3.2 Donner l’expression algébrique correspondante (PEL)
 $
-\pi_{a.Nom,f.Titre}(\rho_{Artiste\to a})
+\pi_{a.Nom,f.Titre}((\rho_{Artiste\to a}(\sigma_{a.ID-artiste=j.ID-artiste})\rho_{Joue\to j})(\sigma_{j.ID-film=f.ID-film})\rho_{Film\to f})
 $
+```SQL
+SELECT a.Nom,f.Titre
+FROM Artiste as a, Film as f, Joue as j
+WHERE f.ID-film = j.ID-film
+AND J.ID-artiste = a.ID-artiste
+```

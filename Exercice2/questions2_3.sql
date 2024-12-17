@@ -41,6 +41,8 @@ where numC =10;
 "QUERY PLAN":"Seq Scan on commandes  (cost=0.00..59.95 rows=3 width=105)"
 "QUERY PLAN":"  Filter: (numc = 10)"
 
+------------------------------------------------------------------------------------
+
 -- (b) Observez l’utilisation de l’index de clé primaires, et trouvez dans la documentation
 -- de PostgreSQL à quoi correspondent les chemins d’accès
 
@@ -54,6 +56,8 @@ where numC =10;
 -- Lecture séquentielle de toutes les lignes de la table.
 -- Utilisé lorsque la table est petite ou lorsque l'index n'est pas disponible ou efficace.
 
+------------------------------------------------------------------------------------
+
 -- (c) Dessinez ce plan sous forme arborescente en utilisant la syntaxe vue en cours
 -- En conclusion de cette question, que faire si dans les requêtes sur la relation “commande”,
 -- la recherche par numéro de client est beaucoup plus fréquente que la recherche par date
@@ -61,6 +65,8 @@ where numC =10;
 -- Il faut créer un deuxième index sur numéro de client
 
 à faire
+
+------------------------------------------------------------------------------------
 
 -- 3. Soit la requête ReqA suivante
 -- --ReqA - - Noms de produits command és par les clients qui portent le nom : 'nomc_1287 '- -
@@ -80,10 +86,14 @@ where nomc ='nomc_1287';
 "QUERY PLAN":"  ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)"
 "QUERY PLAN":"        Index Cond: (nump = co.nump)"
 
+------------------------------------------------------------------------------------
+
 -- (b) Dessinez ce plan sous forme arborescente en utilisant la syntaxe vue en cours, et en
 -- annotant avec les algorithmes et méthodes d’accès aux tables
 
 à faire
+
+------------------------------------------------------------------------------------
 
 -- (c) Optimisez par deux index la requête ReqA. N’oubliez pas de reporter les commandes de
 -- création de vos index dans votre rapport
@@ -94,12 +104,16 @@ where nomc ='nomc_1287';
 
 à faire
 
+------------------------------------------------------------------------------------
+
 -- (d) Donnez le plan d’exécution PEP retourné par PostgreSQL après la création des index et
 -- comparer avec le plan précédent
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
 
 à faire
+
+------------------------------------------------------------------------------------
 
 -- 4. Comparer les plans d’exécution des requêtes ci-dessous
 -- • Requête-A:
@@ -120,6 +134,8 @@ where not exists
 ( select numc from optimisation.livraisons
 where optimisation.livraisons.numc = optimisation.clients.numc );
 
+------------------------------------------------------------------------------------
+
 -- 5. Soit la requête suivante, qui est souvent utilisée pour éviter de manquer des recherches pour
 -- un problème de casse.
 -- -- Recherche et affichage des clients avec passage en majuscules
@@ -133,20 +149,27 @@ where upper ( NomC )='nomc_1287';
 "QUERY PLAN":"  Rows Removed by Filter: 500"
 "QUERY PLAN":"Planning Time: 1.040 ms"
 "QUERY PLAN":"Execution Time: 0.585 ms"
-
-
 -- requête à expliciter >
+
+à faire
+
+------------------------------------------------------------------------------------
+
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le
 
+------------------------------------------------------------------------------------
 
 -- (c) Suggérez l’ajout d’un index pour optimiser la requête. N’oubliez pas de reportez la
 -- commande de création de votre index dans votre rapport
 
+------------------------------------------------------------------------------------
 
 -- (d) Redonnez le PEP correspondant après la création de votre index et expliquez
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
+
+------------------------------------------------------------------------------------
 
 -- 6. Soit maintenant la requête suivante
 SELECT COUNT (*)
@@ -161,14 +184,21 @@ WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 "QUERY PLAN":"Planning Time: 1.085 ms"
 "QUERY PLAN":"Execution Time: 0.938 ms"
 -- requête à expliciter >
+
+------------------------------------------------------------------------------------
+
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le en indiquant notamment les chemins d’accès aux tables et les algorithmes
 
 à faire
 
+------------------------------------------------------------------------------------
+
 -- (c) La clé primaire est-elle utilisée ? Pourquoi ?
 
 non, à faire
+
+------------------------------------------------------------------------------------
 
 -- (d) Plutôt que de créer un nouvel index couteux, proposez une ré-écriture de la requête qui
 -- utilisera l’index existant via la clé primaire.

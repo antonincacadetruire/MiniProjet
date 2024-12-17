@@ -123,30 +123,54 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- 5. Soit la requête suivante, qui est souvent utilisée pour éviter de manquer des recherches pour
 -- un problème de casse.
 -- -- Recherche et affichage des clients avec passage en majuscules
-select upper ( nomc ) , adressec
+select upper ( NomC ) , adressec
 from clients
-where upper ( nomc )='nomc_1287';
+where upper ( NomC )='nomc_1287';
 -- (a) Donnez le plan d’exécution de cette requête en utilisant cette syntaxe:
 -- Explain analyse
--- equ ê te à expliciter >
+"QUERY PLAN":"Seq Scan on clients  (cost=0.00..25.50 rows=2 width=129) (actual time=0.551..0.552 rows=0 loops=1)"
+"QUERY PLAN":"  Filter: (upper((nomc)::text) = 'nomc_1287'::text)"
+"QUERY PLAN":"  Rows Removed by Filter: 500"
+"QUERY PLAN":"Planning Time: 1.040 ms"
+"QUERY PLAN":"Execution Time: 0.585 ms"
+
+
+-- requête à expliciter >
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le
+
+
 -- (c) Suggérez l’ajout d’un index pour optimiser la requête. N’oubliez pas de reportez la
 -- commande de création de votre index dans votre rapport
+
+
 -- (d) Redonnez le PEP correspondant après la création de votre index et expliquez
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
 
 -- 6. Soit maintenant la requête suivante
--- SELECT COUNT (*)
--- FROM commandes
--- WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
+SELECT COUNT (*)
+FROM commandes
+WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 -- (a) Donnez le plan d’exécution de cette requête en utilisant la syntaxe:
 -- Explain analyse
+"QUERY PLAN":"Aggregate  (cost=64.97..64.98 rows=1 width=8) (actual time=0.872..0.873 rows=1 loops=1)"
+"QUERY PLAN":"  ->  Seq Scan on commandes  (cost=0.00..64.94 rows=10 width=0) (actual time=0.042..0.854 rows=201 loops=1)"
+"QUERY PLAN":"        Filter: (EXTRACT(year FROM datecom) = '2017'::numeric)"
+"QUERY PLAN":"        Rows Removed by Filter: 1795"
+"QUERY PLAN":"Planning Time: 1.085 ms"
+"QUERY PLAN":"Execution Time: 0.938 ms"
 -- requête à expliciter >
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le en indiquant notamment les chemins d’accès aux tables et les algorithmes
---.. .
+
+à faire
+
 -- (c) La clé primaire est-elle utilisée ? Pourquoi ?
+
+non, à faire
+
 -- (d) Plutôt que de créer un nouvel index couteux, proposez une ré-écriture de la requête qui
 -- utilisera l’index existant via la clé primaire.
+
+à faire

@@ -1,0 +1,7 @@
+-- Statistiques
+-- 1. Reprenez les requêtes de la section 1.2. Expliquez les plans qui changent (et la raison probable)
+-- après avoir recueilli des statistiques sur les tables. (La réponse doit être brève et concise)
+-- • La commande suivante met à jour les statistiques
+-- analyse CLIENT , OCCUPATION ;
+-- • La commande suivante permet de voir les statistiques à l’écran
+-- analyse verbose CLIENT , OCCUPATION ;

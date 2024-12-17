@@ -2,60 +2,55 @@
 -- exécuter).
 -- Soit le schéma suivant :
 CREATE TABLE Artiste (
-ID - artiste NUMBER (4) ,
-Nom VARCHAR2 (32) ,
-Adresse VARCHAR2 (32) ) ;
+    ID-artiste NUMBER (4),
+    Nom VARCHAR2 (32),
+    Adresse VARCHAR2 (32)
+);
+
 CREATE TABLE Film (
-ID - film NUMBER (4) ,
-Titre VARCHAR2 (32) ,
-Ann ée NUMBER (4) ,
-ID - ré alisateur NUMBER (4) );
+    ID-film NUMBER (4),
+    Titre VARCHAR2 (32),
+    Année NUMBER (4),
+    ID-réalisateur NUMBER (4)
+);
+
 CREATE TABLE Joue (
-ID - artiste NUMBER (4) ,
-ID - film NUMBER (4) );
--- 1. Donner l’ordre SQL pour la requˆete : Afficher le nom des acteurs et le titre des films o`u ils
+    ID-artiste NUMBER (4), 
+    ID-film NUMBER (4)
+);
+
+-- 1. Donner l’ordre SQL pour la requête : Afficher le nom des acteurs et le titre des films où ils
 -- ont joué
 
+SELECT a.Nom,f.Titre
+FROM Artiste as a, Film as f, Joue as j
+WHERE f.ID-film = j.ID-film
+AND J.ID-artiste = a.ID-artiste
 
 -- 2. Donner l’expression algébrique correspondante (PEL)
+
 
 
 -- 3. Dans chacun des cas suivants, le plan d’exécution PEP routourné par Oracle vous est donné
 -- (a) 1er cas : il n’existe que deux index, un sur FILM(ID−realisateur), et un sur ARTISTE(ID−
 -- artiste)
-SELECT STATEMENT
-MERGE JOIN
-SORT JOIN
-NESTED LOOPS
-TABLE ACCESS FULL JOUE
-TABLE ACCESS BY ROWID ARTISTE
-INDEX UNIQUE SCAN ARTISTE_IDX
 
-SORT JOIN
-TABLE ACCESS FULL
-
+SELECT
+    STATEMENT MERGE
+    JOIN SORT
+    JOIN NESTED LOOPS TABLE ACCESS FULL JOUE TABLE ACCESS BY ROWID ARTISTE INDEX UNIQUE SCAN ARTISTE_IDX SORT
+    JOIN TABLE ACCESS FULL 
+    
 -- (b) 2ème cas: un index sur FILM(ID − F ilm), et un sur JOUE(ID − Artiste)
-SELECT STATEMENT
-NESTED LOOPS
-NESTED LOOPS
-TABLE ACCESS FULL ARTISTE
-TABLE ACCESS BY ROWID JOUE
-INDEX RANGE SCAN JOUE_ARTISTE
-TABLE ACCESS BY ROWID FILM
-INDEX UNIQUE SCAN FILM_IDX
 
--- (c) 3ème cas: un index sur FILM(ID − F ilm), et un sur JOUE(ID − F ilm)
-SELECT STATEMENT
-MERGE JOIN
-SORT JOIN
-NESTED LOOPS
-TABLE ACCESS FULL JOUE
-TABLE ACCESS BY ROWID FILM
-INDEX UNIQUE SCAN FILM_IDX
-
-SORT JOIN
-TABLE ACCESS FULL ARTISTE
-
+SELECT
+    STATEMENT NESTED LOOPS NESTED LOOPS TABLE ACCESS FULL ARTISTE TABLE ACCESS BY ROWID JOUE INDEX RANGE SCAN JOUE_ARTISTE TABLE ACCESS BY ROWID FILM INDEX UNIQUE SCAN FILM_IDX -- (c) 3ème cas: un index sur FILM(ID − F ilm), et un sur JOUE(ID − F ilm)
+SELECT
+    STATEMENT MERGE
+    JOIN SORT
+    JOIN NESTED LOOPS TABLE ACCESS FULL JOUE TABLE ACCESS BY ROWID FILM INDEX UNIQUE SCAN FILM_IDX SORT
+    JOIN TABLE ACCESS FULL ARTISTE 
+    
 -- • Analysez les PEP retourné par Oracle en répondant aux questions suivantes:
 -- – Pour le 1er cas (a), le parcours séquentiel est fait sur quelle(s) table(s)? Quel(s)
 -- index sont utilisés pour la jointure? Avec quel autre table on aurait pu faire

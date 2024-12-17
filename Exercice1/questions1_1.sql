@@ -3,7 +3,7 @@
 -- (a) Le nom et prénom du client numéro 5
 
 
--- (b) Les jours o`u le client numéro 5 a occupé une chambre
+-- (b) Les jours où le client numéro 5 a occupé une chambre
 
 
 -- (c) Les chambres occupées le 1999-01-22

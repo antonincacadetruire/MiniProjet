@@ -155,11 +155,13 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- 5. Soit la requête suivante, qui est souvent utilisée pour éviter de manquer des recherches pour
 -- un problème de casse.
 -- Recherche et affichage des clients avec passage en majuscules
--- select upper ( NomC ) , adressec
--- from clients
--- where upper ( NomC )='nomc_1287';
+select upper ( NomC ) , adressec
+from clients
+where upper ( NomC )='nomc_1287';
 -- (a) Donnez le plan d’exécution de cette requête en utilisant cette syntaxe:
 -- Explain analyse
+
+
 -- "QUERY PLAN":"Seq Scan on clients  (cost=0.00..25.50 rows=2 width=129) (actual time=0.551..0.552 rows=0 loops=1)"
 -- "QUERY PLAN":"  Filter: (upper((nomc)::text) = 'nomc_1287'::text)"
 -- "QUERY PLAN":"  Rows Removed by Filter: 500"
@@ -179,6 +181,8 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- (c) Suggérez l’ajout d’un index pour optimiser la requête. N’oubliez pas de reportez la
 -- commande de création de votre index dans votre rapport
 
+CREATE INDEX clients_nomc ON optimisation.clients (nomc)
+
 ------------------------------------------------------------------------------------
 
 -- (d) Redonnez le PEP correspondant après la création de votre index et expliquez
@@ -188,9 +192,9 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 ------------------------------------------------------------------------------------
 
 -- 6. Soit maintenant la requête suivante
--- SELECT COUNT (*)
--- FROM commandes
--- WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
+SELECT COUNT (*)
+FROM commandes
+WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 -- (a) Donnez le plan d’exécution de cette requête en utilisant la syntaxe:
 -- Explain analyse
 

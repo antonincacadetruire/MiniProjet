@@ -46,15 +46,26 @@ where numC =10;
 -- (b) Observez l’utilisation de l’index de clé primaires, et trouvez dans la documentation
 -- de PostgreSQL à quoi correspondent les chemins d’accès
 
--- Index Scan:
+-- Chemins d'accès dans PostgreSQL :
+-- Les chemins d'accès (ou "access methods") dans PostgreSQL définissent comment les données sont stockées et accédées. Voici quelques types de chemins d'accès courants :
 
--- Utilisation d'un index pour récupérer les lignes dans un ordre spécifique.
--- Peut être utilisé pour des requêtes avec des conditions de filtrage sur des colonnes indexées.
--- et
--- Sequential Scan (Seq Scan):
+-- Heap (Tas) :
+-- Le chemin d'accès par défaut pour les tables ordinaires. Les données sont stockées sans ordre particulier.
 
--- Lecture séquentielle de toutes les lignes de la table.
--- Utilisé lorsque la table est petite ou lorsque l'index n'est pas disponible ou efficace.
+-- B-tree (Arbre B) :
+-- Utilisé pour les index, y compris les index de clé primaire. Permet des recherches, des insertions, des suppressions et des accès séquentiels efficaces.
+
+-- Hash :
+-- Utilisé pour les index basés sur des tables de hachage. Efficace pour les recherches d'égalité.
+
+-- GiST (Generalized Search Tree) :
+-- Un cadre extensible pour les index qui peut être utilisé pour des types de données complexes comme les géométries.
+
+-- GIN (Generalized Inverted Index) :
+-- Utilisé pour les index inversés, souvent pour les recherches de texte intégral.
+
+-- BRIN (Block Range INdex) :
+-- Utilisé pour les index sur des colonnes où les valeurs sont physiquement proches les unes des autres.
 
 ------------------------------------------------------------------------------------
 
@@ -62,9 +73,10 @@ where numC =10;
 -- En conclusion de cette question, que faire si dans les requêtes sur la relation “commande”,
 -- la recherche par numéro de client est beaucoup plus fréquente que la recherche par date
 -- de commande ?
+
 -- Il faut créer un deuxième index sur numéro de client
 
--- à faire
+-- fait, voir questions2_3_2_c
 
 ------------------------------------------------------------------------------------
 
@@ -102,7 +114,8 @@ where nomc ='nomc_1287';
 -- create index ... ;
 -- create index ... ;
 
--- à faire
+CREATE INDEX clients_nomc on optimisation.clients (nomc);
+CREATE INDEX concerne_nomc on optimisation.concerne (nomc);
 
 ------------------------------------------------------------------------------------
 
@@ -111,7 +124,10 @@ where nomc ='nomc_1287';
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
 
--- à faire
+-- plan à faire
+
+DROP INDEX clients_nomc;
+DROP INDEX concerne_nomc;
 
 ------------------------------------------------------------------------------------
 

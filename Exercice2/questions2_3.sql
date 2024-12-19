@@ -87,6 +87,7 @@ from optimisation.produits p
 join optimisation.concerne co using ( nump )
 join optimisation.clients c using ( numc )
 where nomc ='nomc_1287';
+
 -- (a) Donnez le plan d’exécution PEP retourné par PostgreSQL
 -- "QUERY PLAN":"Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
 -- "QUERY PLAN":"  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
@@ -126,8 +127,8 @@ CREATE INDEX concerne_nomc on optimisation.concerne (nomc);
 
 -- plan à faire
 
-DROP INDEX clients_nomc;
-DROP INDEX concerne_nomc;
+DROP INDEX optimisation.clients_nomc;
+DROP INDEX optimisation.concerne_nomc;
 
 ------------------------------------------------------------------------------------
 
@@ -156,8 +157,8 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- un problème de casse.
 -- Recherche et affichage des clients avec passage en majuscules
 select upper ( NomC ) , adressec
-from clients
-where upper ( NomC )='nomc_1287';
+from optimisation.clients
+where upper ( NomC )='NOMC_206';
 -- (a) Donnez le plan d’exécution de cette requête en utilisant cette syntaxe:
 -- Explain analyse
 
@@ -176,18 +177,30 @@ where upper ( NomC )='nomc_1287';
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le
 
+-- Voir questions2_3_5_b
+
 ------------------------------------------------------------------------------------
 
 -- (c) Suggérez l’ajout d’un index pour optimiser la requête. N’oubliez pas de reportez la
 -- commande de création de votre index dans votre rapport
 
-CREATE INDEX clients_nomc ON optimisation.clients (nomc)
+CREATE INDEX clients_nomc ON optimisation.clients (upper(nomc));
+
+
 
 ------------------------------------------------------------------------------------
 
 -- (d) Redonnez le PEP correspondant après la création de votre index et expliquez
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
+
+-- "QUERY PLAN":"Bitmap Heap Scan on clients  (cost=4.29..9.49 rows=2 width=129)"
+-- "QUERY PLAN":"  Recheck Cond: (upper((nomc)::text) = 'NOMC_206'::text)"
+-- "QUERY PLAN":"  ->  Bitmap Index Scan on clients_nomc  (cost=0.00..4.29 rows=2 width=0)"
+-- "QUERY PLAN":"        Index Cond: (upper((nomc)::text) = 'NOMC_206'::text)"
+
+-- Le plan de requête montre que l'index clients_nomc est utilisé efficacement pour filtrer les lignes basées sur la colonne nomc.
+-- L'index est un index fonctionnel sur la version majuscule de la colonne nomc, ce qui améliore les performances des requêtes qui filtrent sur la version majuscule de la colonne.
 
 ------------------------------------------------------------------------------------
 

@@ -193,7 +193,7 @@ CREATE INDEX clients_nomc ON optimisation.clients (nomc)
 
 -- 6. Soit maintenant la requête suivante
 SELECT COUNT (*)
-FROM commandes
+FROM optimisation.commandes
 WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 -- (a) Donnez le plan d’exécution de cette requête en utilisant la syntaxe:
 -- Explain analyse
@@ -211,17 +211,19 @@ WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le en indiquant notamment les chemins d’accès aux tables et les algorithmes
 
--- à faire
+-- Voir questions2_3_6_b.drawio.png
 
 ------------------------------------------------------------------------------------
 
 -- (c) La clé primaire est-elle utilisée ? Pourquoi ?
 
--- non, car il y a d'abord une extraction  
+-- non, car il y a d'abord une extraction de celle-ci puis un retraitement.
 
 ------------------------------------------------------------------------------------
 
 -- (d) Plutôt que de créer un nouvel index couteux, proposez une ré-écriture de la requête qui
 -- utilisera l’index existant via la clé primaire.
 
--- à faire
+SELECT COUNT(*)
+FROM optimisation.commandes
+WHERE datecom > '12-31-2016' AND datecom < '01-01-2018';

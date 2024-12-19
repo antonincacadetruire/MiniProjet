@@ -73,9 +73,10 @@ where numC =10;
 -- En conclusion de cette question, que faire si dans les requêtes sur la relation “commande”,
 -- la recherche par numéro de client est beaucoup plus fréquente que la recherche par date
 -- de commande ?
+
 -- Il faut créer un deuxième index sur numéro de client
 
--- à faire
+-- fait, voir questions2_3_2_c
 
 ------------------------------------------------------------------------------------
 
@@ -113,7 +114,8 @@ where nomc ='nomc_1287';
 -- create index ... ;
 -- create index ... ;
 
--- à faire
+CREATE INDEX clients_nomc on optimisation.clients (nomc);
+CREATE INDEX concerne_nomc on optimisation.concerne (nomc);
 
 ------------------------------------------------------------------------------------
 
@@ -122,7 +124,10 @@ where nomc ='nomc_1287';
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
 
--- à faire
+-- plan à faire
+
+DROP INDEX clients_nomc;
+DROP INDEX concerne_nomc;
 
 ------------------------------------------------------------------------------------
 

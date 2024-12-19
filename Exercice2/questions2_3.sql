@@ -87,7 +87,9 @@ from optimisation.produits p
 join optimisation.concerne co using ( nump )
 join optimisation.clients c using ( numc )
 where nomc ='nomc_1287';
+
 -- (a) Donnez le plan d’exécution PEP retourné par PostgreSQL
+
 -- "QUERY PLAN":"Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
 -- "QUERY PLAN":"  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
 -- "QUERY PLAN":"        Hash Cond: (co.numc = c.numc)"
@@ -126,8 +128,8 @@ CREATE INDEX concerne_nomc on optimisation.concerne (nomc);
 
 -- plan à faire
 
-DROP INDEX clients_nomc;
-DROP INDEX concerne_nomc;
+DROP INDEX optimisation.clients_nomc;
+DROP INDEX optimisation.concerne_nomc;
 
 ------------------------------------------------------------------------------------
 
@@ -155,11 +157,13 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- 5. Soit la requête suivante, qui est souvent utilisée pour éviter de manquer des recherches pour
 -- un problème de casse.
 -- Recherche et affichage des clients avec passage en majuscules
--- select upper ( NomC ) , adressec
--- from clients
--- where upper ( NomC )='nomc_1287';
+select upper ( NomC ) , adressec
+from optimisation.clients
+where upper ( NomC )='NOMC_206';
 -- (a) Donnez le plan d’exécution de cette requête en utilisant cette syntaxe:
 -- Explain analyse
+
+
 -- "QUERY PLAN":"Seq Scan on clients  (cost=0.00..25.50 rows=2 width=129) (actual time=0.551..0.552 rows=0 loops=1)"
 -- "QUERY PLAN":"  Filter: (upper((nomc)::text) = 'nomc_1287'::text)"
 -- "QUERY PLAN":"  Rows Removed by Filter: 500"
@@ -174,10 +178,16 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le
 
+-- Voir questions2_3_5_b
+
 ------------------------------------------------------------------------------------
 
 -- (c) Suggérez l’ajout d’un index pour optimiser la requête. N’oubliez pas de reportez la
 -- commande de création de votre index dans votre rapport
+
+CREATE INDEX clients_nomc ON optimisation.clients (upper(nomc));
+
+
 
 ------------------------------------------------------------------------------------
 
@@ -185,12 +195,20 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
 
+-- "QUERY PLAN":"Bitmap Heap Scan on clients  (cost=4.29..9.49 rows=2 width=129)"
+-- "QUERY PLAN":"  Recheck Cond: (upper((nomc)::text) = 'NOMC_206'::text)"
+-- "QUERY PLAN":"  ->  Bitmap Index Scan on clients_nomc  (cost=0.00..4.29 rows=2 width=0)"
+-- "QUERY PLAN":"        Index Cond: (upper((nomc)::text) = 'NOMC_206'::text)"
+
+-- Le plan de requête montre que l'index clients_nomc est utilisé efficacement pour filtrer les lignes basées sur la colonne nomc.
+-- L'index est un index fonctionnel sur la version majuscule de la colonne nomc, ce qui améliore les performances des requêtes qui filtrent sur la version majuscule de la colonne.
+
 ------------------------------------------------------------------------------------
 
 -- 6. Soit maintenant la requête suivante
--- SELECT COUNT (*)
--- FROM commandes
--- WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
+SELECT COUNT (*)
+FROM optimisation.commandes
+WHERE EXTRACT ( YEAR FROM datecom ) = 2017;
 -- (a) Donnez le plan d’exécution de cette requête en utilisant la syntaxe:
 -- Explain analyse
 
@@ -207,17 +225,19 @@ where optimisation.livraisons.numc = optimisation.clients.numc );
 -- (b) Dessinez ce plan PEP sous forme arborescente (syntaxe vu en cours) en l’annotant et
 -- expliquez-le en indiquant notamment les chemins d’accès aux tables et les algorithmes
 
--- à faire
+-- Voir questions2_3_6_b.drawio.png
 
 ------------------------------------------------------------------------------------
 
 -- (c) La clé primaire est-elle utilisée ? Pourquoi ?
 
--- non, car il y a d'abord une extraction  
+-- non, car il y a d'abord une extraction de celle-ci puis un retraitement.
 
 ------------------------------------------------------------------------------------
 
 -- (d) Plutôt que de créer un nouvel index couteux, proposez une ré-écriture de la requête qui
 -- utilisera l’index existant via la clé primaire.
 
--- à faire
+SELECT COUNT(*)
+FROM optimisation.commandes
+WHERE datecom > '12-31-2016' AND datecom < '01-01-2018';

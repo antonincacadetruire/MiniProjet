@@ -89,6 +89,7 @@ join optimisation.clients c using ( numc )
 where nomc ='nomc_1287';
 
 -- (a) Donnez le plan d’exécution PEP retourné par PostgreSQL
+
 -- "QUERY PLAN":"Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
 -- "QUERY PLAN":"  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
 -- "QUERY PLAN":"        Hash Cond: (co.numc = c.numc)"

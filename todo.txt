@@ -3,4 +3,5 @@ Expliquer le pourquoi du comment #
 
 Ex2 :
 dessin 2.3.3_b degueulasse
+2.3.3.D dessin joli
 2.3.4 pas fait

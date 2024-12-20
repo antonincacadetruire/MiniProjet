@@ -384,7 +384,7 @@ Utilisé pour les index inversés, souvent pour les recherches de texte intégra
 Utilisé pour les index sur des colonnes où les valeurs sont physiquement proches les unes des autres.*
 
 ### 2.3.3
-
+**a)**
 ```bash
 Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
   ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
@@ -396,7 +396,30 @@ Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
   ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)"
         Index Cond: (nump = co.nump)"
 ```
+**b)**
 ![image](./Exercice2/questions2_3_3_b.drawio.png)
+**c)**
+```sql
+CREATE INDEX clients_nomc on optimisation.clients (nomc);
+CREATE INDEX concerne_nomc on optimisation.concerne (numc);
+```
+**d)**
+```bash
+Nested Loop  (cost=4.92..41.47 rows=12 width=8)
+  ->  Nested Loop  (cost=4.65..37.88 rows=12 width=4)
+        ->  Index Scan using clients_nomc on clients c  (cost=0.27..8.29 rows=1 width=4)
+              Index Cond: ((nomc)::text = 'nomc_1287'::text)
+        ->  Bitmap Heap Scan on concerne co  (cost=4.38..29.47 rows=12 width=8)
+              Recheck Cond: (numc = c.numc)
+              ->  Bitmap Index Scan on concerne_nomc  (cost=0.00..4.37 rows=12 width=0)
+                    Index Cond: (numc = c.numc)
+  ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)
+        Index Cond: (nump = co.nump)
+```
+
+Ici l'utilisation des index a permi d'ameliorer considerablement le cout (une division de l'ordre d'à peu près 3).
+
+C'est principalement grace aux accès par index pour le join (nested loop), là où avant on était contraint de faire un hash join.
 
 ### 2.3.4
 

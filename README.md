@@ -360,26 +360,47 @@ Seq Scan on commandes  (cost=0.00..59.95 rows=3 width=105)
 ```
 #### Question b)
 
-Chemins d'accès dans PostgreSQL :
-Les chemins d'accès (ou "access methods") dans PostgreSQL définissent comment les données sont stockées et accédées. Voici quelques types de chemins d'accès courants :
+Issu de la documentation :
 
-Heap (Tas) :
-Le chemin d'accès par défaut pour les tables ordinaires. Les données sont stockées sans ordre particulier.
+*Chemins d'accès dans PostgreSQL :
+Les chemins d'accès (ou "access methods") dans PostgreSQL définissent comment les données sont stockées et accédées. Voici quelques types de chemins d'accès courants :*
 
-B-tree (Arbre B) :
-Utilisé pour les index, y compris les index de clé primaire. Permet des recherches, des insertions, des suppressions et des accès séquentiels efficaces.
+*Heap (Tas) :
+Le chemin d'accès par défaut pour les tables ordinaires. Les données sont stockées sans ordre particulier.*
 
-Hash :
-Utilisé pour les index basés sur des tables de hachage. Efficace pour les recherches d'égalité.
+*B-tree (Arbre B) :
+Utilisé pour les index, y compris les index de clé primaire. Permet des recherches, des insertions, des suppressions et des accès séquentiels efficaces.*
 
-GiST (Generalized Search Tree) :
-Un cadre extensible pour les index qui peut être utilisé pour des types de données complexes comme les géométries.
+*Hash :
+Utilisé pour les index basés sur des tables de hachage. Efficace pour les recherches d'égalité.*
 
-GIN (Generalized Inverted Index) :
-Utilisé pour les index inversés, souvent pour les recherches de texte intégral.
+*GiST (Generalized Search Tree) :
+Un cadre extensible pour les index qui peut être utilisé pour des types de données complexes comme les géométries.*
 
-BRIN (Block Range INdex) :
-Utilisé pour les index sur des colonnes où les valeurs sont physiquement proches les unes des autres.
+*GIN (Generalized Inverted Index) :
+Utilisé pour les index inversés, souvent pour les recherches de texte intégral.*
+
+*BRIN (Block Range INdex) :
+Utilisé pour les index sur des colonnes où les valeurs sont physiquement proches les unes des autres.*
+
+### 2.3.3
+
+```bash
+Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
+  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
+        Hash Cond: (co.numc = c.numc)"
+        ->  Seq Scan on concerne co  (cost=0.00..92.23 rows=5923 width=8)"
+        ->  Hash  (cost=24.25..24.25 rows=1 width=4)"
+              ->  Seq Scan on clients c  (cost=0.00..24.25 rows=1 width=4)"
+                    Filter: ((nomc)::text = 'nomc_1287'::text)"
+  ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)"
+        Index Cond: (nump = co.nump)"
+```
+![image](./Exercice2/questions2_3_3_b.drawio.png)
+
+### 2.3.4
+
+
 
 
 # Ex3

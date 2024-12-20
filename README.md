@@ -283,6 +283,58 @@ E; Hash Join via table de hashage
 
 On utilise finalement la table commande, seulement on n'utilise pas l'index dessus : en effet, l'index se trouve être (datecom, numc) ce qui le rend inutilisable pour un join sur numc.
 Pour ce qui est de l'ordre, il faut voir du coté du nombre de lignes de chaque table, ce qui permet d'avoir un coût inferieur.
+Cela fait que parmi les variantes que nous avons testé (join manuel dans un where, left et right join), rien ne change dans le PEP.
+
+### Requète 8
+
+```sql
+select distinct nomc , nomp
+from optimisation.clients , optimisation.concerne , optimisation.produits , optimisation.commandes ,
+optimisation.livraisons
+where optimisation.clients.numc = optimisation.commandes.numc
+and optimisation.commandes.datecom = optimisation.concerne.datecom
+and optimisation.commandes.numc = optimisation.concerne.numc
+and optimisation.produits.nump = optimisation.concerne.nump
+```
+
+```bash
+HashAggregate  (cost=100114.17..100937.37 rows=82320 width=16)
+  Group Key: clients.nomc, produits.nomp
+  ->  Merge Join  (cost=543.79..54241.77 rows=9174480 width=16)
+        Merge Cond: ((commandes.datecom = concerne.datecom) AND (commandes.numc = clients.numc))
+        ->  Nested Loop  (cost=0.28..38108.00 rows=3040380 width=8)
+              ->  Index Only Scan using commandes_pkey on commandes  (cost=0.28..74.20 rows=1995 width=8)
+              ->  Materialize  (cost=0.00..32.86 rows=1524 width=0)
+                    ->  Seq Scan on livraisons  (cost=0.00..25.24 rows=1524 width=0)
+        ->  Sort  (cost=543.49..558.54 rows=6020 width=28)
+              Sort Key: concerne.datecom, clients.numc
+              ->  Hash Join  (cost=40.50..165.57 rows=6020 width=28)
+                    Hash Cond: (concerne.nump = produits.nump)
+                    ->  Hash Join  (cost=20.25..129.39 rows=6020 width=24)
+                          Hash Cond: (concerne.numc = clients.numc)
+                          ->  Seq Scan on concerne  (cost=0.00..93.20 rows=6020 width=12)
+                          ->  Hash  (cost=14.00..14.00 rows=500 width=12)
+                                ->  Seq Scan on clients  (cost=0.00..14.00 rows=500 width=12)
+                    ->  Hash  (cost=14.00..14.00 rows=500 width=12)
+                          ->  Seq Scan on produits  (cost=0.00..14.00 rows=500 width=12)
+```
+Avant toute chose, on peut remarquer que d'un point de vue sémantique,
+on cherche à faire un grand join de la plupart des tables,
+et un produit cartesien sur livraisons pour récupérer tous les noms distincts.
+
+Ainsi, On remarque que les coûts les plus importants sont le HashAggregate (c'est à dire ce qui fait office de distinct) 
+et le Merge Join, ainsi que la Nested Loop.
+Vu qu'on fait un grand join sur l'ensemble des tables, et qu'on y adjoint L'ENSEMBLE des livraisons, 
+on est amené à traiter beaucoup de lignes.
+Ainsi, en remontant les noeuds à chaque étape, en particulier au niveau de la nested loop qui traite les livraisons,
+le nombre de ligne en sorie croit exponentiellement.
+C'est le noeud HashAggregate qui traite le plus grand nombre de ligne, d'où le fait que son
+cout total soit le plus élevé.
+
+En retirant la table "livraison", le cout total passe à 312 contre plus de 100 000 sinon.
+
+Si on tenait à executer cette requète sans latence, on pourrait juste enlever la table livraison
+de cette dernière, car son schema montre bien qu'elle n'apporte aucun nomc/nomp ni n'en filtre.
 
 # Ex3
 ## 3.2 Donner l’expression algébrique correspondante (PEL)

@@ -72,12 +72,30 @@ AND J.ID-artiste = a.ID-artiste
 -- index sont utilisés pour la jointure? Avec quel autre table on aurait pu faire
 -- le parcours séquentiel? L’index sur ID − realisateur est-il utilisable pour la
 -- jointure? Pourquoi?
--- – Pour le 2ème cas (b), pourquoi la table (ARTISTE) est elle choisi pour effectuer
+
+
+-- le parcours séquentiel est fait sur les tables FILM et JOUE
+-- Pour la jointure les index
+-- L'index ID-realisateur n'est pas utilisable ici car on cherche avant à faire une jointure sur Joue, et pas directement  sur Artiste
+-- Ce n'est donc âs possible d'utiliser ID-Realisateur ici
+
+-- – Pour le 2ème cas (b), pourquoi la table (ARTISTE) est elle choisie pour effectuer
 -- le parcours séquentiel initial dans la jointure?
+
+-- Car cette fois-ci c'est Joue qui a l'index sur ID Artiste, ce qui permet directement d'identifier les acteurs parmi 
+-- les artistes.
+
 -- – Pour le 3ème cas (c), les index existant ont servi à la jointure entre quelles tables?
 -- Pourrait on inverser l’ordre dans cette jointure? Quel algorithme est utilisé pour
 -- la seconde jointure?
+
+-- Ils ont servis à la jointure entre FILM et JOUE. On pourrait inverser en effet l'ordre dans cette jointure sans impacter le
+-- résultat de la boucle.
+-- L'algorithme utilisé pour la deuxième jointure est le Tri-Fusion
+
 -- • Pour chacun des cas (a), (b) et (c):
 -- – Donnez le PEP (sous forme arborescente) correspondant au plan retourné par
 -- Oracle, en l’annotant par les algorithmes de jointure et les méthodes d’accès aux
 -- tables utilisés
+
+-- fait

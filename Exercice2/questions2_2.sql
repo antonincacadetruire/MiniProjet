@@ -53,10 +53,9 @@ where NomP='nomp_327'
 ------------------------------------------------------------------------------------
 
 -- 6. (REQ6) Donnez le nombre de commandes par client (numc, nombre)
-SELECT distinct cl.NumC,COUNT(*) as nombre
-FROM optimisation.clients as cl,optimisation.commandes as co
-WHERE cl.NumC = co.NumC
-GROUP BY cl.NumC;
+SELECT distinct co.NumC,COUNT(*) as nombre
+FROM optimisation.commandes as co
+GROUP BY co.NumC;
 
 ------------------------------------------------------------------------------------
 
@@ -116,7 +115,8 @@ and optimisation.produits.nump = optimisation.concerne.nump
 -- On remarque que les coûts les plus importants sont le HashAggregate (c'est à dire ce qui fait office de distinct) 
 -- et le Merge Join, ainsi que la Nested Loop.
 -- Vu qu'on fait un grand join sur l'ensemble des tables, et qu'on y adjoint L'ENSEMBLE des livraisons, 
--- on est amené à traiter beaucoup de lignes
--- Ainsi, 
--- Ce qui peut paraître étonnant est que la requête HashAggregate ne manipule que 83754 rows, mais est plus longue que
--- le Merge JOIN qui en manipule 100 fois plus.
+-- on est amené à traiter beaucoup de lignes.
+-- Ainsi, en remontant les noeuds à chaque étape, en particulier au niveau de la nested loop qui traite les livraisons,
+-- le nombre de ligne en sorie croit exponentiellement.
+-- C'est le noeud HashAggregate qui traite le plus grand nombre de ligne, d'où le fait que son
+-- cout total soit le plus élevé.

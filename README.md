@@ -285,7 +285,7 @@ On utilise finalement la table commande, seulement on n'utilise pas l'index dess
 Pour ce qui est de l'ordre, il faut voir du coté du nombre de lignes de chaque table, ce qui permet d'avoir un coût inferieur.
 Cela fait que parmi les variantes que nous avons testé (join manuel dans un where, left et right join), rien ne change dans le PEP.
 
-### Requète 8
+### Requête 8
 
 ```sql
 select distinct nomc , nomp
@@ -318,6 +318,9 @@ HashAggregate  (cost=100114.17..100937.37 rows=82320 width=16)
                     ->  Hash  (cost=14.00..14.00 rows=500 width=12)
                           ->  Seq Scan on produits  (cost=0.00..14.00 rows=500 width=12)
 ```
+
+![image](./Exercice2/questions2_2_8.drawio.png)
+
 Avant toute chose, on peut remarquer que d'un point de vue sémantique,
 on cherche à faire un grand join de la plupart des tables,
 et un produit cartesien sur livraisons pour récupérer tous les noms distincts.
@@ -327,14 +330,57 @@ et le Merge Join, ainsi que la Nested Loop.
 Vu qu'on fait un grand join sur l'ensemble des tables, et qu'on y adjoint L'ENSEMBLE des livraisons, 
 on est amené à traiter beaucoup de lignes.
 Ainsi, en remontant les noeuds à chaque étape, en particulier au niveau de la nested loop qui traite les livraisons,
-le nombre de ligne en sorie croit exponentiellement.
+le nombre de ligne en sortie croit exponentiellement.
 C'est le noeud HashAggregate qui traite le plus grand nombre de ligne, d'où le fait que son
 cout total soit le plus élevé.
 
-En retirant la table "livraison", le cout total passe à 312 contre plus de 100 000 sinon.
+En retirant la table "livraison" du ```FROM```, le cout total passe à 312 contre plus de 100 000 sinon.
 
-Si on tenait à executer cette requète sans latence, on pourrait juste enlever la table livraison
-de cette dernière, car son schema montre bien qu'elle n'apporte aucun nomc/nomp ni n'en filtre.
+Si on tenait à executer cette requête sans trop latence, on pourrait donc juste retirer cette partie, car son schema montre bien qu'elle n'apporte aucun nouveau nomc/nomp ni n'en filtre.
+
+## 2.3 Optimisation par des indexs
+
+### 2.3.2
+#### PEP dessins
+![image](./Exercice2/questions2_3_2_c.drawio.png)
+#### A
+```bash
+Index Scan using commandes_pkey on commandes  (cost=0.28..8.30 rows=1 width=105)
+  Index Cond: ((datecom = '2020-09-17'::date) AND (numc = 10))
+```
+#### B
+```bash
+Index Scan using commandes_pkey on commandes  (cost=0.28..8.29 rows=1 width=105)
+  Index Cond: (datecom = '2020-09-17'::date)
+```
+#### C
+```bash
+Seq Scan on commandes  (cost=0.00..59.95 rows=3 width=105)
+  Filter: (numc = 10)
+```
+#### Question b)
+
+Chemins d'accès dans PostgreSQL :
+Les chemins d'accès (ou "access methods") dans PostgreSQL définissent comment les données sont stockées et accédées. Voici quelques types de chemins d'accès courants :
+
+Heap (Tas) :
+Le chemin d'accès par défaut pour les tables ordinaires. Les données sont stockées sans ordre particulier.
+
+B-tree (Arbre B) :
+Utilisé pour les index, y compris les index de clé primaire. Permet des recherches, des insertions, des suppressions et des accès séquentiels efficaces.
+
+Hash :
+Utilisé pour les index basés sur des tables de hachage. Efficace pour les recherches d'égalité.
+
+GiST (Generalized Search Tree) :
+Un cadre extensible pour les index qui peut être utilisé pour des types de données complexes comme les géométries.
+
+GIN (Generalized Inverted Index) :
+Utilisé pour les index inversés, souvent pour les recherches de texte intégral.
+
+BRIN (Block Range INdex) :
+Utilisé pour les index sur des colonnes où les valeurs sont physiquement proches les unes des autres.
+
 
 # Ex3
 ## 3.2 Donner l’expression algébrique correspondante (PEL)

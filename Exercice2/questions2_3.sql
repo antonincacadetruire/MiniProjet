@@ -105,7 +105,7 @@ where nomc ='nomc_1287';
 -- (b) Dessinez ce plan sous forme arborescente en utilisant la syntaxe vue en cours, et en
 -- annotant avec les algorithmes et méthodes d’accès aux tables
 
--- à faire
+-- voir questions2_3_3_b.drawio.png
 
 ------------------------------------------------------------------------------------
 
@@ -117,7 +117,7 @@ where nomc ='nomc_1287';
 -- create index ... ;
 
 CREATE INDEX clients_nomc on optimisation.clients (nomc);
-CREATE INDEX concerne_nomc on optimisation.concerne (nomc);
+CREATE INDEX concerne_nomc on optimisation.concerne (numc);
 
 ------------------------------------------------------------------------------------
 
@@ -126,7 +126,16 @@ CREATE INDEX concerne_nomc on optimisation.concerne (nomc);
 -- A la fin de cette question, supprimez les index crées (Reférez vous à la documentation de
 -- PostgreSQL)
 
--- plan à faire
+-- Nested Loop  (cost=4.92..41.47 rows=12 width=8)
+--   ->  Nested Loop  (cost=4.65..37.88 rows=12 width=4)
+--         ->  Index Scan using clients_nomc on clients c  (cost=0.27..8.29 rows=1 width=4)
+--               Index Cond: ((nomc)::text = 'nomc_1287'::text)
+--         ->  Bitmap Heap Scan on concerne co  (cost=4.38..29.47 rows=12 width=8)
+--               Recheck Cond: (numc = c.numc)
+--               ->  Bitmap Index Scan on concerne_nomc  (cost=0.00..4.37 rows=12 width=0)
+--                     Index Cond: (numc = c.numc)
+--   ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)
+--         Index Cond: (nump = co.nump)
 
 DROP INDEX optimisation.clients_nomc;
 DROP INDEX optimisation.concerne_nomc;

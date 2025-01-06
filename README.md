@@ -397,7 +397,9 @@ Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
         Index Cond: (nump = co.nump)"
 ```
 **b)**
+
 ![image](./Exercice2/questions2_3_3_b.drawio.png)
+
 **c)**
 ```sql
 CREATE INDEX clients_nomc on optimisation.clients (nomc);
@@ -423,6 +425,65 @@ C'est principalement grace aux accès par index pour le join (nested loop), là 
 
 ### 2.3.4
 
+### 2.3.5
+
+**a)**
+```bash
+Seq Scan on clients  (cost=0.00..25.50 rows=2 width=129) (actual time=0.551..0.552 rows=0 loops=1)
+->  Filter: (upper((nomc)::text) = 'nomc_1287'::text)
+->  Rows Removed by Filter: 500"
+Planning Time: 1.040 ms
+Execution Time: 0.585 ms
+```
+**b)**
+
+![image](./Exercice2/questions2_3_5_b.drawio.png)
+
+**c)**
+
+```sql
+CREATE INDEX clients_nomc ON optimisation.clients (upper(nomc));
+```
+
+**d)**
+
+```bash
+Bitmap Heap Scan on clients  (cost=4.29..9.49 rows=2 width=129)
+   Recheck Cond: (upper((nomc)::text) = 'NOMC_206'::text)
+   ->  Bitmap Index Scan on clients_nomc  (cost=0.00..4.29 rows=2 width=0)
+         Index Cond: (upper((nomc)::text) = 'NOMC_206'::text)
+```
+
+Le plan de requête montre que l'index clients_nomc est utilisé efficacement pour filtrer les lignes basées sur la colonne nomc.
+L'index est un index fonctionnel sur la version majuscule de la colonne nomc, ce qui améliore les performances des requêtes qui filtrent sur la version majuscule de la colonne.
+
+### 2.3.6
+
+**a)**
+
+```bash
+Aggregate  (cost=64.97..64.98 rows=1 width=8) (actual time=0.872..0.873 rows=1 loops=1)
+  ->  Seq Scan on commandes  (cost=0.00..64.94 rows=10 width=0) (actual time=0.042..0.854 rows=201 loops=1)
+        Filter: (EXTRACT(year FROM datecom) = '2017'::numeric)
+        Rows Removed by Filter: 1795
+Planning Time: 1.085 ms
+Execution Time: 0.938 ms
+```
+**b)**
+
+![image](./Exercice2/questions2_3_6_b.drawio.png)
+
+**c)**
+
+Non, car il y a d'abord une extraction de celle-ci puis un retraitement.
+
+**d)**
+
+```sql
+SELECT COUNT(*)
+FROM optimisation.commandes
+WHERE datecom > '12-31-2016' AND datecom < '01-01-2018';
+```
 
 
 

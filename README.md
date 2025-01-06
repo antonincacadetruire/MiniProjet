@@ -63,7 +63,7 @@ CREATE INDEX idx_occupation_jour ON occupation(jour);
 ```
 ### q2
 
-a) Ne change pas :
+**a)** Ne change pas :
 ```bash
 Seq Scan on client  (cost=0.00..12.88 rows=1 width=156) (actual time=0.015..0.015 rows=0 loops=1)
   Filter: (cli_id = 5)
@@ -72,7 +72,7 @@ Execution Time: 0.042 ms
 ```
 Il semblerait que l'on n'utilise pas l'index sur client car pour un petite table ce n'est pas rentable. En effet, quand on utilise explain analyse, on se rend compte que la table tient sur **une seule page**. Ainsi, parcourir l'index ne ferait que parcourir des blocs suplementaires et donc irait plus lentment.
 
-b) Pour faire simple, cela revient à un index scan sur cli_id = 5
+**b)** Pour faire simple, cela revient à un index scan sur cli_id = 5
 ```bash
 Bitmap Heap Scan on occupation  (cost=4.19..12.66 rows=5 width=38) (actual time=0.018..0.019 rows=0 loops=1)
   Recheck Cond: (cli_id = 5)
@@ -82,7 +82,7 @@ Planning Time: 0.498 ms
 Execution Time: 0.053 ms
 ```
 
-c) index scan sur occupation(jour):
+**c)** index scan sur occupation(jour):
 ```bash
 Bitmap Heap Scan on occupation  (cost=4.19..12.66 rows=5 width=4) (actual time=0.021..0.022 rows=0 loops=1)
   Recheck Cond: ((jour)::text = '1999-01-22'::text)
@@ -446,6 +446,8 @@ Planning Time: 0.591 ms
 Execution Time: 1.763 ms
 ```
 
+La reqête a commence par récupérer les numc des clients qui sont concerné par des livraisons, en parcourant toutes les livraisons, (donc dans optimisation.livraisons), puis fait une projection sur numc, et on filtre optimisation.clients avec la sélection précédente, et si leur numc est dans la sélection, ils ne sont pas conservés.
+
 **requête-b )**
 
 ```bash
@@ -463,6 +465,12 @@ HashSetOp Except  (cost=0.00..73.56 rows=500 width=8) (actual time=1.163..1.182 
 Planning Time: 0.090 ms
 Execution Time: 1.216 ms
 ```
+Pour executer cette requete, Postgresql execute d'abord deux subquery représentant des full scan sur à là fois livraison.numc et clients.numc.
+
+Cependant, ces sous-requêtes créent une colonne suplémentaire en fonction de la table d'origine : ainsi pour SELECT 2 la sortie aura un format (numc, 1) tandis que la sortie pour SELECT 1 aura un format (numc, 0).
+Cela est necessaire avant de append et pour avoir un format d'entrée adapté pour la HashSetOp Except qui va se charger du coeur de ce qu'on attendait.
+(Compare les ensembles combinés et élimine les lignes communes entre eux, en utilisant la colonne constante ajoutée (0 ou 1) pour identifier la source.)
+
 
 **requête-c )**
 
@@ -481,6 +489,40 @@ Planning Time: 0.719 ms
 Execution Time: 1.482 ms
 ```
 
+Le Hash Anti Join fonctionne comme un Hash Join mais en ne gardant que les éléments différents. Il est couplé aux numc de livraison et de clients, et permet d'exclure à nouveau les clients qui ont des livraisons.
+
+Comparaison des PEP (Plan d'Exécution et Performance)
+```
+Requête-A (NOT IN) :
+Coût total : 28.55..43.80
+Temps d'exécution : 1.763 ms
+Points clés :
+Utilise une sous-requête avec un seq scan sur optimisation.livraisons, suivi d'une vérification NOT IN.
+Inefficace si des valeurs NULL sont présentes dans la sous-requête, ce qui pourrait entraîner des résultats incorrects.
+Planning légèrement plus long.
+
+Requête-B (EXCEPT) :
+Coût total : 0.00..73.56
+Temps d'exécution : 1.216 ms
+Points clés :
+Implémente une opération de type HashSetOp pour calculer la différence entre deux ensembles.
+Plus rapide en exécution grâce à une meilleure gestion des scans séquentiels et à l'utilisation de l'opérateur EXCEPT.
+Temps de planning minimal.
+
+Requête-C (NOT EXISTS) :
+Coût total : 43.39..61.24
+Temps d'exécution : 1.482 ms
+Points clés :
+Utilise un Hash Anti Join, plus performant que NOT IN pour éviter les duplications de vérifications.
+Nécessite de générer un hash sur les résultats de la table livraisons.
+
+Conclusion :
+
+Requête-B (EXCEPT) est la plus rapide en termes de temps d'exécution et a un coût de planning très faible. C'est l'option à privilégier pour optimiser les performances.
+Requête-C (NOT EXISTS) offre une bonne alternative, particulièrement si le traitement des valeurs NULL est important.
+Requête-A (NOT IN) est la moins efficace et la moins fiable en présence de valeurs NULL, à éviter dans la majorité des cas.
+```
+    
 ### 2.3.5
 
 **a)**

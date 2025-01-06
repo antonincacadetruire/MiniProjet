@@ -425,15 +425,78 @@ C'est principalement grace aux accès par index pour le join (nested loop), là 
 
 ### 2.3.4
 
+**requête-a )**
+
+```bash
+Seq Scan on optimisation.clients  (cost=28.55..43.80 rows=250 width=4) (actual time=1.360..1.661 rows=20 loops=1)
+  Output: clients.numc
+  Filter: (NOT (ANY (clients.numc = (hashed SubPlan 1).col1)))
+  Rows Removed by Filter: 480
+  SubPlan 1
+    ->  Seq Scan on optimisation.livraisons  (cost=0.00..24.84 rows=1484 width=4) (actual time=0.012..0.548 rows=1484 loops=1)
+          Output: livraisons.numc
+Planning Time: 0.591 ms
+Execution Time: 1.763 ms
+```
+
+**requête-b )**
+
+```bash
+HashSetOp Except  (cost=0.00..73.56 rows=500 width=8) (actual time=1.163..1.182 rows=20 loops=1)
+  Output: "SELECT 1".numc, (0)
+  ->  Append  (cost=0.00..68.60 rows=1984 width=8) (actual time=0.015..0.765 rows=1984 loops=1)
+        ->  Subquery Scan on "SELECT 1"  (cost=0.00..19.00 rows=500 width=8) (actual time=0.014..0.173 rows=500 loops=1)
+              Output: "SELECT 1".numc, 0
+              ->  Seq Scan on optimisation.clients  (cost=0.00..14.00 rows=500 width=4) (actual time=0.013..0.103 rows=500 loops=1)
+                    Output: clients.numc
+        ->  Subquery Scan on "SELECT 2"  (cost=0.00..39.68 rows=1484 width=8) (actual time=0.010..0.409 rows=1484 loops=1)
+              Output: "SELECT 2".numc, 1
+              ->  Seq Scan on optimisation.livraisons  (cost=0.00..24.84 rows=1484 width=4) (actual time=0.009..0.210 rows=1484 loops=1)
+                    Output: livraisons.numc
+Planning Time: 0.090 ms
+Execution Time: 1.216 ms
+3eme requete
+
+Hash Anti Join  (cost=43.39..61.24 rows=20 width=4) (actual time=1.116..1.439 rows=20 loops=1)
+  Output: clients.numc
+  Hash Cond: (clients.numc = livraisons.numc)
+  ->  Seq Scan on optimisation.clients  (cost=0.00..14.00 rows=500 width=4) (actual time=0.020..0.143 rows=500 loops=1)
+        Output: clients.numc, clients.nomc, clients.adressec
+  ->  Hash  (cost=24.84..24.84 rows=1484 width=4) (actual time=1.071..1.073 rows=1484 loops=1)
+        Output: livraisons.numc
+        Buckets: 2048  Batches: 1  Memory Usage: 69kB
+        ->  Seq Scan on optimisation.livraisons  (cost=0.00..24.84 rows=1484 width=4) (actual time=0.012..0.462 rows=1484 loops=1)
+              Output: livraisons.numc
+Planning Time: 0.719 ms
+Execution Time: 1.482 ms
+```
+
+**requête-c )**
+
+```bash
+Hash Anti Join  (cost=43.39..61.24 rows=20 width=4) (actual time=1.116..1.439 rows=20 loops=1)
+  Output: clients.numc
+  Hash Cond: (clients.numc = livraisons.numc)
+  ->  Seq Scan on optimisation.clients  (cost=0.00..14.00 rows=500 width=4) (actual time=0.020..0.143 rows=500 loops=1)
+        Output: clients.numc, clients.nomc, clients.adressec
+  ->  Hash  (cost=24.84..24.84 rows=1484 width=4) (actual time=1.071..1.073 rows=1484 loops=1)
+        Output: livraisons.numc
+        Buckets: 2048  Batches: 1  Memory Usage: 69kB
+        ->  Seq Scan on optimisation.livraisons  (cost=0.00..24.84 rows=1484 width=4) (actual time=0.012..0.462 rows=1484 loops=1)
+              Output: livraisons.numc
+Planning Time: 0.719 ms
+Execution Time: 1.482 ms
+```
+
 ### 2.3.5
 
 **a)**
 ```bash
-Seq Scan on clients  (cost=0.00..25.50 rows=2 width=129) (actual time=0.551..0.552 rows=0 loops=1)
-->  Filter: (upper((nomc)::text) = 'nomc_1287'::text)
-->  Rows Removed by Filter: 500"
-Planning Time: 1.040 ms
-Execution Time: 0.585 ms
+Seq Scan on clients  (cost=0.00..16.50 rows=2 width=129) (actual time=0.663..1.053 rows=2 loops=1)
+  Filter: (upper((nomc)::text) = 'NOMC_206'::text)
+  Rows Removed by Filter: 498
+Planning Time: 0.140 ms
+Execution Time: 1.082 ms
 ```
 **b)**
 
@@ -448,10 +511,13 @@ CREATE INDEX clients_nomc ON optimisation.clients (upper(nomc));
 **d)**
 
 ```bash
-Bitmap Heap Scan on clients  (cost=4.29..9.49 rows=2 width=129)
-   Recheck Cond: (upper((nomc)::text) = 'NOMC_206'::text)
-   ->  Bitmap Index Scan on clients_nomc  (cost=0.00..4.29 rows=2 width=0)
-         Index Cond: (upper((nomc)::text) = 'NOMC_206'::text)
+Bitmap Heap Scan on clients  (cost=4.29..9.49 rows=2 width=129) (actual time=0.125..0.134 rows=2 loops=1)
+  Recheck Cond: (upper((nomc)::text) = 'NOMC_206'::text)
+  Heap Blocks: exact=2
+  ->  Bitmap Index Scan on clients_nomc  (cost=0.00..4.29 rows=2 width=0) (actual time=0.090..0.091 rows=2 loops=1)
+        Index Cond: (upper((nomc)::text) = 'NOMC_206'::text)
+Planning Time: 0.530 ms
+Execution Time: 0.228 ms
 ```
 
 Le plan de requête montre que l'index clients_nomc est utilisé efficacement pour filtrer les lignes basées sur la colonne nomc.
@@ -485,16 +551,41 @@ FROM optimisation.commandes
 WHERE datecom > '12-31-2016' AND datecom < '01-01-2018';
 ```
 
-
-
 # Ex3
-## 3.2 Donner l’expression algébrique correspondante (PEL)
-$
-\pi_{a.Nom,f.Titre}((\rho_{Artiste\to a}(\sigma_{a.ID-artiste=j.ID-artiste})\rho_{Joue\to j})(\sigma_{j.ID-film=f.ID-film})\rho_{Film\to f})
-$
+
+### 3.1
+
 ```SQL
 SELECT a.Nom,f.Titre
 FROM Artiste as a, Film as f, Joue as j
 WHERE f.ID-film = j.ID-film
 AND J.ID-artiste = a.ID-artiste
 ```
+
+### 3.2
+$
+\pi_{a.Nom,f.Titre}((\rho_{Artiste\to a}(\sigma_{a.ID-artiste=j.ID-artiste})\rho_{Joue\to j})(\sigma_{j.ID-film=f.ID-film})\rho_{Film\to f})
+$
+
+### 3.3
+
+**a)**
+
+Le parcours séquentiel est fait sur les tables FILM et JOUE
+Pour la jointure les index
+L'index ID-realisateur n'est pas utilisable ici car on cherche avant à faire une jointure sur Joue, et pas directement  sur Artiste
+Ce n'est donc pas possible d'utiliser ID-Realisateur ici
+
+![image](./Exercice3/questions3_3_a.drawio.png)
+
+**b)**
+
+Car cette fois-ci c'est Joue qui a l'index sur ID Artiste, ce qui permet directement d'identifier les acteurs parmi les artistes.
+
+![image](./Exercice3/questions3_3_b.drawio.png)
+
+**c)**
+
+Ils ont servis à la jointure entre FILM et JOUE. On pourrait inverser en effet l'ordre dans cette jointure sans impacter le résultat de la boucle. L'algorithme utilisé pour la deuxième jointure est le Tri-Fusion
+
+![image](./Exercice3/questions3_3_c.drawio.png)

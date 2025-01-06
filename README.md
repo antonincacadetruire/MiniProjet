@@ -455,20 +455,6 @@ HashSetOp Except  (cost=0.00..73.56 rows=500 width=8) (actual time=1.163..1.182 
                     Output: livraisons.numc
 Planning Time: 0.090 ms
 Execution Time: 1.216 ms
-3eme requete
-
-Hash Anti Join  (cost=43.39..61.24 rows=20 width=4) (actual time=1.116..1.439 rows=20 loops=1)
-  Output: clients.numc
-  Hash Cond: (clients.numc = livraisons.numc)
-  ->  Seq Scan on optimisation.clients  (cost=0.00..14.00 rows=500 width=4) (actual time=0.020..0.143 rows=500 loops=1)
-        Output: clients.numc, clients.nomc, clients.adressec
-  ->  Hash  (cost=24.84..24.84 rows=1484 width=4) (actual time=1.071..1.073 rows=1484 loops=1)
-        Output: livraisons.numc
-        Buckets: 2048  Batches: 1  Memory Usage: 69kB
-        ->  Seq Scan on optimisation.livraisons  (cost=0.00..24.84 rows=1484 width=4) (actual time=0.012..0.462 rows=1484 loops=1)
-              Output: livraisons.numc
-Planning Time: 0.719 ms
-Execution Time: 1.482 ms
 ```
 
 **requête-c )**

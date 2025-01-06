@@ -391,19 +391,21 @@ Utilisé pour les index sur des colonnes où les valeurs sont physiquement proch
 ### 2.3.3
 **a)**
 ```bash
-Nested Loop  (cost=24.54..135.83 rows=12 width=8)"
-  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)"
+Nested Loop  (cost=24.54..135.83 rows=12 width=8)
+  ->  Hash Join  (cost=24.26..132.17 rows=12 width=4)
         Hash Cond: (co.numc = c.numc)"
-        ->  Seq Scan on concerne co  (cost=0.00..92.23 rows=5923 width=8)"
-        ->  Hash  (cost=24.25..24.25 rows=1 width=4)"
-              ->  Seq Scan on clients c  (cost=0.00..24.25 rows=1 width=4)"
-                    Filter: ((nomc)::text = 'nomc_1287'::text)"
-  ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)"
-        Index Cond: (nump = co.nump)"
+        ->  Seq Scan on concerne co  (cost=0.00..92.23 rows=5923 width=8)
+        ->  Hash  (cost=24.25..24.25 rows=1 width=4)
+              ->  Seq Scan on clients c  (cost=0.00..24.25 rows=1 width=4)
+                    Filter: ((nomc)::text = 'nomc_1287'::text)
+  ->  Index Scan using produits_pkey on produits p  (cost=0.27..0.30 rows=1 width=12)
+        Index Cond: (nump = co.nump)
 ```
 **b)**
 
 ![image](./Exercice2/questions2_3_3_b.drawio.png)
+
+
 
 **c)**
 ```sql

@@ -146,11 +146,13 @@ Seq Scan on produits  (cost=0.00..14.00 rows=500 width=12) (actual time=0.027..0
 Planning Time: 0.074 ms
 Execution Time: 0.286 ms
 ```
-A; Cout total : 14, Temps exec : 0.286ms
+```text
+A; Cout total : 14, Temps exec : 0.286ms 
 B; Nb tuples : 500, Taille en octets : 12
 C; Nb blocs : 9
 D; Sequentiel
 E; -
+```
 
 ### 3
 ```sql
